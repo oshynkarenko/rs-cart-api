@@ -1,0 +1,41 @@
+create extension if not exists "uuid-ossp";
+
+create table if not exists carts(
+	id uuid not null default uuid_generate_v4() primary key,
+	user_id uuid not null,
+	created_at date not null,
+	updated_at date not null,
+	status text not null check (status in('OPEN', 'ORDERED'))
+);
+
+create table if not exists cart_items(
+	cart_id uuid not null default uuid_generate_v4(),
+	product_id uuid,
+	count integer,
+	foreign key (cart_id) references carts(id)
+);
+
+create table if not exists orders(
+	id uuid not null default uuid_generate_v4() primary key,
+	user_id uuid not null,
+	foreign key (cart_id) references carts(id),
+	payment JSON,
+	delivery JSON,
+	comments text,
+	status text not null check (status in('CREATED', 'PAID', 'SENT')),
+	total number
+);
+
+insert into carts (user_id, created_at, updated_at, status) values ('7567ec4b-b10c-48c5-9345-fc73c48a80a0', '2020-05-15T00:00:00Z', '2020-05-15T00:00:00Z', 'OPEN');
+insert into carts (user_id, created_at, updated_at, status) values ('7567ec4b-b10c-48c5-9345-fc73c48a80aa', '2020-05-15T00:00:00Z', '2020-05-15T00:00:00Z', 'ORDERED');
+insert into carts (user_id, created_at, updated_at, status) values ('7567ec4b-b10c-48c5-9345-fc73c48a80a2', '2020-05-15T00:00:00Z', '2020-05-15T00:00:00Z', 'OPEN');
+insert into carts (user_id, created_at, updated_at, status) values ('7567ec4b-b10c-48c5-9345-fc73c48a80a1', '2020-05-15T00:00:00Z', '2020-05-15T00:00:00Z', 'ORDERED');
+insert into carts (user_id, created_at, updated_at, status) values ('7567ec4b-b10c-48c5-9345-fc73c48a80a3', '2020-05-15T00:00:00Z', '2020-05-15T00:00:00Z', 'ORDERED');
+
+insert into cart_items (cart_id, product_id, count) values ('8dac45a9-606e-43d2-adb3-afbbe73d1b5e', '7567ec4b-b10c-48c5-9345-fc73c48a80a0', 5);
+insert into cart_items (cart_id, product_id, count) values ('8dac45a9-606e-43d2-adb3-afbbe73d1b5e', '7567ec4b-b10c-48c5-9345-fc73c48a80aa', 3);
+insert into cart_items (cart_id, product_id, count) values ('dfb1cf39-2d4a-40c0-b8cb-25c73e64cf50', '7567ec4b-b10c-48c5-9345-fc73c48a80a2', 7);
+insert into cart_items (cart_id, product_id, count) values ('e76be260-7023-4bd4-8cb5-5c54aad568af', '7567ec4b-b10c-48c5-9345-fc73c48a80a1', 1);
+insert into cart_items (cart_id, product_id, count) values ('95a75646-7fe2-4110-a544-8354569517e1', '7567ec4b-b10c-48c5-9345-fc73c48a80a3', 4);
+
+insert into orders (user_id, cart_id, payment, delivery, comments, status, total) values ('939a37a7-cf3f-4be4-997f-9ff11f23aad4', '12f9db34-9e9a-4fa0-b59f-0dab25ece810', '{"key": "value"}', '{"key": "value"}', 'test comment', 'CREATED', 75);
