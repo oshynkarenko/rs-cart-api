@@ -1,0 +1,31 @@
+service: cart-api-service
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: eu-north-1
+  stage: dev
+
+functions:
+  main:
+    handler: dist/main.handler
+    events:
+      - http:
+          method: GET
+          path: api/profile/cart
+          cors: true
+      - http:
+          method: PUT
+          path: api/profile/cart
+          cors: true
+      - http:
+          method: DELETE
+          path: api/profile/cart
+          cors: true
+      - http:
+          method: POST
+          path: api/profile/cart/checkout
+          cors: true
